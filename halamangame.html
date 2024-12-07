@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Onet</title>
+  <style>
+    body {
+      margin: 3rem;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .game-container {
+		margin-top: 10rem;
+		margin-bottom: 10rem;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 5);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .game-board {
+      display: grid;
+      grid-template-columns: repeat(4, 100px); /* 4 kolom */
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .card {
+      width: 100px;
+      height: 100px;
+      background-color: #ccc;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 1.5em;
+    }
+
+    .card.flipped {
+      background-color: green;
+    }
+
+    .card img {
+      width: 60%;
+      height: 60%;
+      display: none;
+    }
+
+    .card.flipped img {
+      display: block;
+    }
+
+    .info {
+      margin-top: 20px;
+    }
+
+    .button {
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background-color: #0056b3;
+    }
+	
+	/* Gaya khusus untuk tombol Kembali */
+	button:first-child {
+	  position: absolute;
+	  left: 27rem; /* Posisi kiri dalam container */
+	  background-color: #800000; /* Warna maroon */
+	  font-weight: bold;
+	}
+
+	button:first-child:hover {
+	  background-color: red; /* Warna maroon yang lebih gelap saat hover */
+	  color: #00ff00;
+	}
+	
+  </style>
+</head>
+<body>
+  
+  <div class="game-container">
+  <button class="button" onclick="kembali()">Kembali</button>
+    <h1>Game Onet</h1>
+    <div class="info">
+      <div>Skor: <span id="score">0</span></div>
+      <div>Waktu: <span id="timer">30</span>s</div>
+    </div>
+    <div class="game-board" id="gameBoard">
+      <!-- Papan game akan diisi dengan kartu -->
+    </div>
+    <button class="button" onclick="startGame()">Mulai Permainan</button>
+    <button class="button" id="lanjutBtn" onclick="lanjut()" style="display: none; background-color:green;">Lanjutkan</button>
+  </div>
+
+<script>
+  let score = 0;
+  let timer = 30;
+  let interval;
+  let gameBoard = document.getElementById("gameBoard");
+  let scoreDisplay = document.getElementById("score");
+  let timerDisplay = document.getElementById("timer");
+  let flippedCards = [];
+  let matchedCards = 0;
+  let cardImages = [
+    "🍎", "🍎",
+    "🍌", "🍌",
+    "🍇", "🍇",
+    "🍉", "🍉",
+    "🍓", "🍓",
+    "🍍", "🍍",
+    "🍊", "🍊",
+    "🍒", "🍒"
+  ];
+
+  // Fungsi untuk memulai permainan
+  function startGame() {
+    // Cek apakah ada pengaturan waktu yang tersimpan
+    let storedTimeLimit = localStorage.getItem('timeLimit');
+    if (storedTimeLimit) {
+      timer = parseInt(storedTimeLimit); // Ambil waktu yang tersimpan
+    } else {
+      timer = 30; // Gunakan waktu default jika tidak ada pengaturan
+    }
+
+    // Cek apakah ada skor yang tersimpan, jika ada maka lanjutkan dengan skor tersebut
+
+
+    // Reset status permainan
+    matchedCards = 0;
+    flippedCards = [];
+    scoreDisplay.textContent = score;
+    timerDisplay.textContent = timer;
+
+    // Buat papan permainan dan mulai timer
+    createBoard();
+    interval = setInterval(updateTimer, 1000);
+  }
+
+  // Fungsi untuk memperbarui timer
+  function updateTimer() {
+    timer--;
+    timerDisplay.textContent = timer;
+    if (timer === 0) {
+      clearInterval(interval);
+      alert("Waktu habis! Game selesai.");
+      saveScore(); // Simpan skor ke localStorage setelah permainan selesai
+    }
+  }
+
+  // Fungsi untuk membuat papan permainan
+  function createBoard() {
+    shuffle(cardImages); // Acak gambar kartu
+    gameBoard.innerHTML = "";
+    for (let i = 0; i < cardImages.length; i++) {
+      let card = document.createElement("div");
+      card.classList.add("card");
+      card.dataset.value = cardImages[i];
+      card.innerHTML = `<span class="card-content">${cardImages[i]}</span>`; // Menampilkan emoji di dalam <span>
+      card.addEventListener("click", flipCard);
+      gameBoard.appendChild(card);
+    }
+  }
+
+  // Fungsi untuk membalik kartu
+  function flipCard() {
+    if (flippedCards.length < 2 && !this.classList.contains("flipped")) {
+      this.classList.add("flipped");
+      // Menampilkan emoji hanya ketika kartu dibalik
+      this.querySelector(".card-content").style.display = "block";
+      flippedCards.push(this);
+
+      if (flippedCards.length === 2) {
+        setTimeout(checkMatch, 500);
+      }
+    }
+  }
+
+  // Fungsi untuk memeriksa apakah dua kartu cocok
+  function checkMatch() {
+    if (flippedCards[0].dataset.value === flippedCards[1].dataset.value) {
+      matchedCards++;
+      score += 10;
+      scoreDisplay.textContent = score;
+      flippedCards = [];
+    } else {
+      flippedCards[0].classList.remove("flipped");
+      flippedCards[1].classList.remove("flipped");
+      flippedCards[0].querySelector(".card-content").style.display = "none"; // Sembunyikan emoji lagi
+      flippedCards[1].querySelector(".card-content").style.display = "none"; // Sembunyikan emoji lagi
+      flippedCards = [];
+    }
+
+    if (matchedCards === cardImages.length / 2) {
+      clearInterval(interval);
+      alert("Selamat, Anda menang!");
+      saveScore(); // Simpan skor ke localStorage setelah menang
+      document.getElementById("lanjutBtn").style.display = "block"; // Tampilkan tombol Lanjutkan
+    }
+  }
+
+  // Fungsi untuk mengacak elemen array
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]]; // Tukar elemen
+    }
+  }
+
+  // Fungsi untuk menyimpan skor ke localStorage
+  function saveScore() {
+    localStorage.setItem('score', score); // Simpan skor yang ada
+  }
+
+  // Fungsi untuk melanjutkan permainan
+  function lanjut() {
+    document.getElementById("lanjutBtn").style.display = "none"; // Sembunyikan tombol Lanjutkan
+    startGame(); // Lanjutkan permainan
+  }
+
+  // Fungsi untuk kembali ke menu
+  function kembali() {
+    window.location.href = "menu.html";
+  }
+</script>
+
+</body>
+</html>

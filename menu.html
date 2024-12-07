@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu Utama - Game Onet</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f1f1f1;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      text-align: center;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .menu-button {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      color: white;
+      background-color: #007bff;
+      border: none;
+      border-radius: 8px;
+      margin: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .menu-button:hover {
+      background-color: #0056b3;
+    }
+
+    .exit-button {
+      background-color: #c82333; /* Warna maroon */
+	  font-weight: bold;
+    }
+
+    .exit-button:hover {
+      background-color: red; /* Warna maroon yang lebih gelap saat hover */
+	  color: #00ff00;
+    }
+
+    .score-display {
+      margin-top: 20px;
+      font-size: 1.5em;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Menu Utama</h1>
+    <button class="menu-button" onclick="startGame()">Game Baru</button>
+    <button class="menu-button" onclick="continueGame()">Lanjutkan</button>
+    <button class="menu-button" onclick="viewScore()">Skor</button>
+    <button class="menu-button" onclick="settings()">Pengaturan</button>
+    <button class="menu-button" onclick="aboutGame()">Tentang Game</button>
+    <button class="menu-button exit-button" onclick="exitGame()">Keluar</button>
+    
+    <!-- Menampilkan skor di bawah menu -->
+    <div id="scoreDisplay" class="score-display"></div>
+  </div>
+
+  <script>
+  // Fungsi untuk memulai game baru
+  function startGame() {
+    // Pastikan skor tetap ada di localStorage atau setel ke 0 jika tidak ada
+    let storedScore = localStorage.getItem('score');
+    if (!storedScore) {
+      localStorage.setItem('score', '0'); // Set skor menjadi 0 jika tidak ada
+    }
+
+    // Alihkan ke halaman game baru tanpa menghapus data skor
+    window.location.href = "halamangame.html";
+  }
+
+    function continueGame() {
+      alert("Melanjutkan game...");
+      // Di sini Anda bisa menambahkan kode untuk melanjutkan game jika ada progres disimpan.
+    }
+
+    // Fungsi untuk memuat dan menampilkan skor dari localStorage
+    function viewScore() {
+      let viewScore = localStorage.getItem('score');
+      let scoreDisplay = document.getElementById('scoreDisplay'); // Menambahkan elemen untuk menampilkan skor
+
+      if (viewScore) {
+        let score = parseInt(viewScore);
+        scoreDisplay.textContent = `Skor Anda: ${score}`; // Menampilkan skor
+      } else {
+        scoreDisplay.textContent = "Belum ada skor yang tersimpan."; // Jika tidak ada skor yang tersimpan
+      }
+    }
+
+    function settings() {
+      window.location.href = "settings.html";
+      // Arahkan ke halaman pengaturan jika ada
+    }
+
+    function aboutGame() {
+      window.location.href = "about.html";
+      // Informasi singkat tentang game
+    }
+
+    function exitGame() {
+      // Keluar dari game, misalnya menutup tab atau kembali ke halaman utama
+      window.location.href = "index.html"; // Kembali ke halaman utama
+    }
+  </script>
+</body>
+</html>

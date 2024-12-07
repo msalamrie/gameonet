@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengaturan - Game Onet</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .settings-container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 300px;
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 1.2em;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    select, button {
+      padding: 10px;
+      font-size: 1em;
+      margin-top: 10px;
+      width: 100%;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="settings-container">
+    <h1>Pengaturan Game</h1>
+    <label for="timeLimit">Waktu Permainan (detik):</label>
+    <select id="timeLimit">
+      <option value="30">30 Detik</option>
+      <option value="60">60 Detik</option>
+      <option value="90">90 Detik</option>
+    </select>
+    <button onclick="saveSettings()">Simpan Pengaturan</button>
+  </div>
+
+  <script>
+  function saveSettings() {
+    let timeLimit = document.getElementById('timeLimit').value;
+    localStorage.setItem('timeLimit', timeLimit); // Simpan pengaturan waktu permainan
+    alert('Pengaturan disimpan!');
+    window.location.href = 'menu.html'; // Kembali ke halaman game
+  }
+</script>
+
+
+</body>
+</html>
